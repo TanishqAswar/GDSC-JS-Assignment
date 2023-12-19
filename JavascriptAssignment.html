@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            /* background-color: black; */
+            color: grey;
+            background-image: url(background.jpg);
+            background-size: cover;
+        }
+        
+        .content{
+            position:absolute;
+            top: 23%;
+            margin-left: 25%;
+            margin-right: 25%;
+            width: 50%;
+            animation: anime 5s 1;
+            animation-delay: 3s;
+        }
+        @keyframes anime
+        {
+            0%{opacity: 0;}
+            100%{opacity: 1;}
+        }
+        /* .typewriter {
+            overflow: hidden;
+            border-right: 0.15em solid white;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: 0.1em;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-caret {
+            from, to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: white;
+            }
+        } */
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div style="text-align: center;
+                    /* background-color: aqua; */
+                    font-size: 50px;
+                    color: ;
+                    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+                WELCOME<br> TO<br> RANDOM QUOTE GENERATOR
+        </div>
+        <p>----------------------------------------------------------------<button id="btn" type="button" style="border-radius: 20px;">GENERATE</button>---------------------------------------------------------------</p>
+        <span id="quoteDeploy" style="text-align: center;background-color:aliceblue;font-size: 20px;"></span>
+        <p id="author" style="margin-left:60%;margin-right: 10%;color: grey;font-size: 18px;font-family: 'Times New Roman', Times, serif;background-color: aliceblue;"></p>
+    </div>
+    
+    <script>
+        // function expression using arrow function
+        const generate = async (resolve,reject) => {
+            // document.getElementById("quoteDeploy").innerHTML = "Hi";
+            // 1 Pause Execution
+            // 2 Waiting till Promise Resolution 
+            // 3 Evaluating the await expression
+            const response = await fetch('https://dummyjson.com/quotes/random');
+            const data = await response.json();
+            // console.log(data)
+            return data ;
+        }
+
+        const sleep = (ms) =>{return new Promise((resolve,reject) => setTimeout(resolve, ms));}
+
+        const typeWriter = async (text, elementId) => {
+            const element = document.getElementById(elementId);
+            for (let i = 0; i < text.length; i++) {
+                element.innerHTML += text.charAt(i);
+                await sleep(40); // Adjust the typing speed (milliseconds per character)
+            }
+        }
+
+        const deTypeWriter = async (text,elementId) => {
+            const element = document.getElementById(elementId);
+            for (let i = text.length - 1; i >= 0 ; i--) {
+                element.innerHTML = text.substring(0, i);
+                await sleep(30);
+                
+            }
+        }
+        
+        const btn = document.getElementById("btn");
+
+        // Making CallBack
+
+        btn.addEventListener("click",async () => {
+            try{const data = await generate();
+                
+                const alreadyAuthor = document.querySelector("#author").innerHTML;
+                await deTypeWriter(alreadyAuthor,"author");
+                
+                const alreadyQuote = document.querySelector("#quoteDeploy").innerHTML;
+                await deTypeWriter(alreadyQuote,"quoteDeploy");
+
+                await typeWriter(data.quote, "quoteDeploy");
+                // Here the typeWriting of Quote Completes
+                document.querySelector("#author").innerHTML = 'By - '
+                await typeWriter(data.author,"author")
+                btn.innerHTML = "GENERATE<br> ANOTHER"
+            }
+            catch(error){
+                console.log("We have some error!");
+            }
+            
+        })
+
+    </script>
+</body>
+</html>
